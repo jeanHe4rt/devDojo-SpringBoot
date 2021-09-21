@@ -1,15 +1,17 @@
 package br.com.devdojo.endpoint;
 
 
-import br.com.devdojo.error.CustomErrorType;
 import br.com.devdojo.error.ResourceNotFoundExeception;
 import br.com.devdojo.model.Student;
 import br.com.devdojo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -23,8 +25,8 @@ public class StudentEndpoint {
     }
 
     @GetMapping
-    public ResponseEntity<?> listAll() {
-        return new ResponseEntity<>(studentDao.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> listAll( Pageable pageablele) {
+        return new ResponseEntity<>(studentDao.findAll(pageablele), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
@@ -41,7 +43,7 @@ public class StudentEndpoint {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody Student student) {
+    public ResponseEntity<?> save(@Valid @RequestBody Student student) {
         verifyIfStudentExists(student.getId());
         return new ResponseEntity<>(studentDao.save(student), HttpStatus.CREATED);
     }
