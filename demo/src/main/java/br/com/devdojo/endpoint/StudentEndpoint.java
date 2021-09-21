@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("students")
+@RequestMapping("v1")
 public class StudentEndpoint {
     private final StudentRepository studentDAO;
 
@@ -27,12 +27,12 @@ public class StudentEndpoint {
         this.studentDAO = studentDAO;
     }
 
-    @GetMapping
+    @GetMapping(path="protected/sstudents")
     public ResponseEntity<?> listAll( Pageable pageablele) {
         return new ResponseEntity<>(studentDAO.findAll(pageablele), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "protected/sstudents/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Long id,
                                             @AuthenticationPrincipal UserDetails userDetails) {
         System.out.println(userDetails);
@@ -42,7 +42,7 @@ public class StudentEndpoint {
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
-    @GetMapping(path="findByName/{name}")
+    @GetMapping(path="protected/sstudents/findByName/{name}")
     public ResponseEntity<?> findStudentByName(@PathVariable String name){
         return new ResponseEntity<>(studentDAO.findByNameIgnoreCaseContaining(name),HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ public class StudentEndpoint {
         return new ResponseEntity<>(studentDAO.save(student), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "admin/students/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         verifyIfStudentExists(id);
@@ -61,7 +61,7 @@ public class StudentEndpoint {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping(path="protected/students")
     public ResponseEntity<?> update(@RequestBody Student student) {
         verifyIfStudentExists(student.getId());
         studentDAO.save(student);
